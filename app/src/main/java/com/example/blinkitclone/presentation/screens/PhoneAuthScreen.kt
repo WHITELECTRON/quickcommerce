@@ -45,16 +45,24 @@ fun PhoneAuthScreen(
 
     when (authState) {
         is AuthState.Initial -> {
-            PhoneNumberInputScreen()
+            PhoneNumberInputScreen(
+                navController = navController,
+                phoneAuthViewModel = viewModel
+            )
         }
         is AuthState.CodeSent -> {
-            OtpVerificationScreen()
+            OtpVerificationScreen(
+                phoneAuthViewModel = viewModel
+            )
         }
         is AuthState.Verified -> {
             // Handled in LaunchedEffect above to navigate to HomeScreen
         }
         is AuthState.Error -> {
-            PhoneNumberInputScreen()
+            PhoneNumberInputScreen(
+                navController = navController,
+                phoneAuthViewModel = viewModel
+            )
         }
     }
 }

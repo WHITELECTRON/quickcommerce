@@ -34,35 +34,59 @@ fun NavigationGraph(
         }
 
         composable(Screen.OrderAgainScreen.route) {
-            OrderAgainScreen()
+            OrderAgainScreen(
+                navController = navController,
+                listState = listState,
+                cartViewModel = cartViewModel
+            )
         }
 
         composable(Screen.CategoryScreen.route) {
-            CategoryScreen()
+            CategoryScreen(
+                navController = navController,
+                listState = listState
+            )
         }
 
         composable(Screen.PrintScreen.route) {
-            PrintScreen()
+            PrintScreen(
+                navController = navController,
+                listState = listState
+            )
         }
 
         composable(Screen.SearchBarScreen.route) {
-            SearchBarScreen()
+            SearchBarScreen(
+                navController = navController,
+                cartViewModel = cartViewModel
+            )
         }
 
         composable(Screen.ProfileScreen.route) {
-            ProfileScreen()
+            ProfileScreen(
+                navController = navController
+            )
         }
 
         composable(Screen.ProductScreen.route) {
-            ProductScreen()
+            ProductScreen(
+                navController = navController,
+                cartViewModel = cartViewModel
+            )
         }
 
         composable(Screen.VerticalTabProductScreen.route) {
-            VerticalTabProductScreen()
+            VerticalTabProductScreen(
+                navController = navController,
+                cartViewModel = cartViewModel
+            )
         }
 
         composable(Screen.FinalCheckoutScreen.route) {
-            FinalCheckoutScreen()
+            FinalCheckoutScreen(
+                navController = navController,
+                cartViewModel = cartViewModel
+            )
         }
     }
 }

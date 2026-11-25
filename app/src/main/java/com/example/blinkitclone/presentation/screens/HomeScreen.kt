@@ -190,9 +190,9 @@ fun HomeScreen(
                     label = "CategoryTabContent"
                 ) { tabIndex ->
                     when (tabIndex) {
-                        0 -> AllCategoryScreen()
-                        1 -> SummerCategory()
-                        else -> AllCategoryScreen()
+                        0 -> AllCategoryScreen(navController = navController)
+                        1 -> SummerCategory(navController = navController)
+                        else -> AllCategoryScreen(navController = navController)
                     }
                 }
             }
