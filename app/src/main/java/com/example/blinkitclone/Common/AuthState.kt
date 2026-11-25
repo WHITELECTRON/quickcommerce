@@ -1,4 +1,4 @@
-package com.example.blinkitclone.Common
+package com.example.blinkitclone.common
 
 sealed class AuthState {
     object Initial : AuthState()

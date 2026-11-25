@@ -1,5 +1,4 @@
 package com.example.blinkitclone.presentation.viewmodel
-//package com.example.projectnew.presentation.viewmodel
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableIntStateOf

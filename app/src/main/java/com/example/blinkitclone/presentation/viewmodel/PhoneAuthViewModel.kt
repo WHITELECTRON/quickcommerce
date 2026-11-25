@@ -2,7 +2,7 @@ package com.example.blinkitclone.presentation.viewmodel
 
 import android.app.Activity
 import androidx.lifecycle.ViewModel
-import com.example.blinkitclone.Common.AuthState
+import com.example.blinkitclone.common.AuthState
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthCredential

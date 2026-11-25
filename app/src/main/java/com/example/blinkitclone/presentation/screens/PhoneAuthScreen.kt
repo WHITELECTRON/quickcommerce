@@ -8,7 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.example.blinkitclone.Common.AuthState
+import com.example.blinkitclone.common.AuthState
 import com.example.blinkitclone.presentation.navigation.Screen
 import com.example.blinkitclone.presentation.viewmodel.PhoneAuthViewModel
 
