@@ -25,8 +25,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.blinkitclone.Common.AuthState
 import com.example.blinkitclone.R
-import com.example.blinkitclone.common.AuthState
 import com.example.blinkitclone.presentation.navigation.Screen
 import com.example.blinkitclone.presentation.viewmodel.PhoneAuthViewModel
 

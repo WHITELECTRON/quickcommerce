@@ -2,7 +2,7 @@ package com.example.blinkitclone.presentation.viewmodel
 
 import android.app.Activity
 import androidx.lifecycle.ViewModel
-import com.example.blinkitclone.common.AuthState
+import com.example.blinkitclone.Common.AuthState
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthCredential
@@ -42,8 +42,14 @@ class PhoneAuthViewModel @Inject constructor(
 
             override fun onVerificationFailed(e: FirebaseException) {
                 val errorMsg = when {
-                    e.message?.contains("SHA-1", ignoreCase = true) == true -> "App not authorized (SHA-1 missing in Firebase Console)"
-                    e.message?.contains("invalid", ignoreCase = true) == true -> "Invalid phone number format"
+                    e.message?.contains("operation is not allowed", ignoreCase = true) == true ||
+                    e.message?.contains("disabled", ignoreCase = true) == true ->
+                        "Phone Auth is disabled in Firebase Console! Enable 'Phone' in Firebase Console -> Authentication -> Sign-in method."
+                    e.message?.contains("SHA-1", ignoreCase = true) == true ||
+                    e.message?.contains("appNotAuthorized", ignoreCase = true) == true ->
+                        "App not authorized (Add SHA-1 in Firebase Console)"
+                    e.message?.contains("invalid", ignoreCase = true) == true ->
+                        "Invalid phone number format"
                     else -> e.localizedMessage ?: "Verification failed"
                 }
                 _authState.value = AuthState.Error(errorMsg)
