@@ -1,10 +1,7 @@
 package com.example.blinkitclone.presentation.screens
 
 import android.widget.Toast
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -19,14 +16,18 @@ fun PhoneAuthScreen(
 ) {
     val authState by viewModel.authState.collectAsState()
     val context = LocalContext.current
+    var isCodeSentStep by remember { mutableStateOf(false) }
 
     LaunchedEffect(authState) {
-        when (authState) {
+        when (val state = authState) {
+            is AuthState.CodeSent -> {
+                isCodeSentStep = true
+            }
             is AuthState.Error -> {
                 Toast.makeText(
                     context,
-                    (authState as AuthState.Error).message,
-                    Toast.LENGTH_SHORT
+                    state.message,
+                    Toast.LENGTH_LONG
                 ).show()
             }
             is AuthState.Verified -> {
@@ -43,26 +44,14 @@ fun PhoneAuthScreen(
         }
     }
 
-    when (authState) {
-        is AuthState.Initial -> {
-            PhoneNumberInputScreen(
-                navController = navController,
-                phoneAuthViewModel = viewModel
-            )
-        }
-        is AuthState.CodeSent -> {
-            OtpVerificationScreen(
-                phoneAuthViewModel = viewModel
-            )
-        }
-        is AuthState.Verified -> {
-            // Handled in LaunchedEffect above to navigate to HomeScreen
-        }
-        is AuthState.Error -> {
-            PhoneNumberInputScreen(
-                navController = navController,
-                phoneAuthViewModel = viewModel
-            )
-        }
+    if (isCodeSentStep) {
+        OtpVerificationScreen(
+            phoneAuthViewModel = viewModel
+        )
+    } else {
+        PhoneNumberInputScreen(
+            navController = navController,
+            phoneAuthViewModel = viewModel
+        )
     }
 }

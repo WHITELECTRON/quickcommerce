@@ -1,5 +1,6 @@
 package com.example.blinkitclone.presentation.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -8,11 +9,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.blinkitclone.common.AuthState
 import com.example.blinkitclone.presentation.viewmodel.PhoneAuthViewModel
 
 @Composable
@@ -20,11 +23,13 @@ fun OtpVerificationScreen(
     phoneAuthViewModel: PhoneAuthViewModel
 ) {
     var otpCode by remember { mutableStateOf("") }
-    var isLoading by remember { mutableStateOf(false) }
+    val authState by phoneAuthViewModel.authState.collectAsState()
+    val isLoading = authState is AuthState.Loading
 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(Color.White)
             .padding(horizontal = 20.dp, vertical = 32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -55,10 +60,28 @@ fun OtpVerificationScreen(
                     otpCode = input
                 }
             },
-            label = { Text("Verification Code") },
+            label = { Text("6-Digit Code", color = Color.DarkGray) },
+            placeholder = { Text("123456", color = Color.Gray) },
             singleLine = true,
+            textStyle = TextStyle(
+                color = Color.Black,
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
+            ),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             shape = RoundedCornerShape(10.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = Color.Black,
+                unfocusedTextColor = Color.Black,
+                focusedBorderColor = Color(0xFF0C831F),
+                unfocusedBorderColor = Color.LightGray,
+                focusedLabelColor = Color(0xFF0C831F),
+                unfocusedLabelColor = Color.DarkGray,
+                cursorColor = Color(0xFF0C831F),
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White
+            ),
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -66,14 +89,17 @@ fun OtpVerificationScreen(
 
         Button(
             onClick = {
-                isLoading = true
-                phoneAuthViewModel.verifyCode(otpCode)
+                if (otpCode.length == 6) {
+                    phoneAuthViewModel.verifyCode(otpCode)
+                }
             },
             enabled = otpCode.length == 6 && !isLoading,
             shape = RoundedCornerShape(10.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF0C831F),
-                contentColor = Color.White
+                contentColor = Color.White,
+                disabledContainerColor = Color(0xFF0C831F).copy(alpha = 0.5f),
+                disabledContentColor = Color.White.copy(alpha = 0.7f)
             ),
             modifier = Modifier
                 .fillMaxWidth()

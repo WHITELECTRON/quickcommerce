@@ -26,8 +26,14 @@ class PhoneAuthViewModel @Inject constructor(
     private var verificationId: String? = null
     private var resendToken: PhoneAuthProvider.ForceResendingToken? = null
 
-    fun sendVerificationCode(phoneNumber: String, activity: Activity) {
-        _authState.value = AuthState.CodeSent
+    fun sendVerificationCode(rawPhoneNumber: String, activity: Activity) {
+        val formattedNumber = if (rawPhoneNumber.startsWith("+")) {
+            rawPhoneNumber.trim()
+        } else {
+            "+91${rawPhoneNumber.trim()}"
+        }
+
+        _authState.value = AuthState.Loading
 
         val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             override fun onVerificationCompleted(credential: PhoneAuthCredential) {
@@ -35,7 +41,12 @@ class PhoneAuthViewModel @Inject constructor(
             }
 
             override fun onVerificationFailed(e: FirebaseException) {
-                _authState.value = AuthState.Error(e.localizedMessage ?: "Verification failed")
+                val errorMsg = when {
+                    e.message?.contains("SHA-1", ignoreCase = true) == true -> "App not authorized (SHA-1 missing in Firebase Console)"
+                    e.message?.contains("invalid", ignoreCase = true) == true -> "Invalid phone number format"
+                    else -> e.localizedMessage ?: "Verification failed"
+                }
+                _authState.value = AuthState.Error(errorMsg)
             }
 
             override fun onCodeSent(
@@ -49,7 +60,7 @@ class PhoneAuthViewModel @Inject constructor(
         }
 
         val options = PhoneAuthOptions.newBuilder(firebaseAuth)
-            .setPhoneNumber(phoneNumber)
+            .setPhoneNumber(formattedNumber)
             .setTimeout(60L, TimeUnit.SECONDS)
             .setActivity(activity)
             .setCallbacks(callbacks)
@@ -61,10 +72,11 @@ class PhoneAuthViewModel @Inject constructor(
     fun verifyCode(otpCode: String) {
         val currentVerificationId = verificationId
         if (currentVerificationId.isNullOrEmpty()) {
-            _authState.value = AuthState.Error("Verification ID is empty")
+            _authState.value = AuthState.Error("Verification ID not received yet. Please try sending code again.")
             return
         }
 
+        _authState.value = AuthState.Loading
         val credential = PhoneAuthProvider.getCredential(currentVerificationId, otpCode)
         signInWithPhoneAuthCredential(credential)
     }
@@ -75,7 +87,11 @@ class PhoneAuthViewModel @Inject constructor(
                 _authState.value = AuthState.Verified
             }
             .addOnFailureListener { e ->
-                _authState.value = AuthState.Error(e.localizedMessage ?: "Authentication failed")
+                _authState.value = AuthState.Error(e.localizedMessage ?: "Invalid OTP code entered")
             }
+    }
+
+    fun resetAuthState() {
+        _authState.value = AuthState.Initial
     }
 }

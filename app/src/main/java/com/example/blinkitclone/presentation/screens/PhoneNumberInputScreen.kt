@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -25,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.blinkitclone.R
+import com.example.blinkitclone.common.AuthState
 import com.example.blinkitclone.presentation.navigation.Screen
 import com.example.blinkitclone.presentation.viewmodel.PhoneAuthViewModel
 
@@ -34,7 +36,8 @@ fun PhoneNumberInputScreen(
     phoneAuthViewModel: PhoneAuthViewModel
 ) {
     var phoneNumber by remember { mutableStateOf("") }
-    var isLoading by remember { mutableStateOf(false) }
+    val authState by phoneAuthViewModel.authState.collectAsState()
+    val isLoading = authState is AuthState.Loading
 
     val context = LocalContext.current
     val activity = context as? Activity
@@ -170,10 +173,27 @@ fun PhoneNumberInputScreen(
                 onValueChange = { input ->
                     phoneNumber = input
                 },
-                label = { Text("Phone Number (e.g. +91XXXXXXXXXX)") },
+                label = { Text("Phone Number", color = Color.DarkGray) },
+                placeholder = { Text("9876543210", color = Color.Gray) },
                 singleLine = true,
+                textStyle = TextStyle(
+                    color = Color.Black,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                ),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                 shape = RoundedCornerShape(10.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = Color.Black,
+                    unfocusedTextColor = Color.Black,
+                    focusedBorderColor = Color(0xFF0C831F),
+                    unfocusedBorderColor = Color.LightGray,
+                    focusedLabelColor = Color(0xFF0C831F),
+                    unfocusedLabelColor = Color.DarkGray,
+                    cursorColor = Color(0xFF0C831F),
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White
+                ),
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -182,7 +202,6 @@ fun PhoneNumberInputScreen(
             Button(
                 onClick = {
                     if (phoneNumber.isNotBlank() && activity != null) {
-                        isLoading = true
                         phoneAuthViewModel.sendVerificationCode(phoneNumber, activity)
                     }
                 },
@@ -190,7 +209,9 @@ fun PhoneNumberInputScreen(
                 shape = RoundedCornerShape(10.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF0C831F),
-                    contentColor = Color.White
+                    contentColor = Color.White,
+                    disabledContainerColor = Color(0xFF0C831F).copy(alpha = 0.5f),
+                    disabledContentColor = Color.White.copy(alpha = 0.7f)
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
